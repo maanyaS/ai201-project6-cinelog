@@ -23,9 +23,9 @@
 **Tradeoff acknowledged:** This feature indeed compromises the privacy of the user who may have intended for the watchlist to be private. 
 
 ## Comment 5 — Sort order
-**My position:**
-**Reasoning:**
-**Engagement with reviewer's point:**
+**My position:** Watchlists should continue to default to alphabetical.
+**Reasoning:** When user's want to find the name of a film that they have been wanting to watch in their watchlist, it is easier for them to find the name if the list is organized alphabetically. 
+**Engagement with reviewer's point:** I understand that some users might also prefer seeing the films that they recently added to their list, as a recently added film is more likely to connect to their current tastes in films. However, in situations where the user wants to remember the name of a film that is at the tip of their tongue, it is easier for them to find the film if it is arranged alphabetically. We can always include a toggle near the watchlist header for the user to change the default setting according to their preferences.
 
 ## Comment 6 — Rebase
 **What conflicted:**
