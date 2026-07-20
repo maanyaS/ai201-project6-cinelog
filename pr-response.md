@@ -3,6 +3,7 @@
 ## AI Usage
 1. Asked AI tool Claude to tell me how to approach each comment.
 2. Asked Claude to understand the deduplication logic in add_to_collection()
+3. Used Claude to write the tests in comment 3 following the structure of tests in the test_collection.py file. All tests passed.
 
 ## Comment 1 — Rename
 **What I did: I renamed save_to_watchlist to add_to_watchlist per naming convention in services/watchlist_service.py. I also renamed the function call in routes/watchlist/watchlist.py. I found the call in this file using ctrl + f.**
@@ -17,9 +18,9 @@
 **How I verified: I verified this test works by running the test and passing 100%.**
 
 ## Comment 4 — Default visibility
-**My position:**
-**Reasoning:**
-**Tradeoff acknowledged:**
+**My position:** I stand to continue defaulting watchlists to public=True
+**Reasoning:** I do this because this allows the public to get a better understanding of a user's film taste. This also allows for more community engagement and networking, as a public watchlists allows for people with similar tastes to connect. This can also deepen relationships between friends and followers who can better understand the films that the user tends to like.
+**Tradeoff acknowledged:** This feature indeed compromises the privacy of the user who may have intended for the watchlist to be private. 
 
 ## Comment 5 — Sort order
 **My position:**
