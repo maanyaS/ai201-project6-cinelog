@@ -18,14 +18,18 @@
 **How I verified:** I verified this test works by running the test and passing 100%.
 
 ## Comment 4 — Default visibility
-**My position:** I stand to continue defaulting watchlists to public=True
-**Reasoning:** I do this because this allows the public to get a better understanding of a user's film taste. This also allows for more community engagement and networking, as a public watchlists allows for people with similar tastes to connect. This can also deepen relationships between friends and followers who can better understand the films that the user tends to like.
-**Tradeoff acknowledged:** This feature indeed compromises the privacy of the user who may have intended for the watchlist to be private. 
+**My position:** Watchlists should continue to default to `public=True`.
+
+**Reasoning:** A public default lets other users see a person's film taste, which supports community engagement — people with similar taste can find each other, and friends or followers can get a better sense of what someone is into without having to ask. On a film-tracking app like CineLog, discovery and social connection are part of the core value, and a watchlist is lower-stakes to share than something like private messages or account details — it's closer to a public reading list than to sensitive personal data.
+
+**Tradeoff acknowledged:** This does mean any user who assumed their watchlist would be private has that assumption broken by default. Someone might not want their upcoming viewing habits visible — for example, if they're using the watchlist to track something they'd rather keep to themselves. Since we don't currently expose a way to opt out, users who want privacy have no path to it under this default. If we want to keep `public=True` as the default, I'd argue we should still expose an explicit `public` parameter on `add_to_watchlist()` (as in the stretch goal) so users aren't stuck with the default with no way to change it.
 
 ## Comment 5 — Sort order
-**My position:** Watchlists should continue to default to alphabetical.
-**Reasoning:** When user's want to find the name of a film that they have been wanting to watch in their watchlist, it is easier for them to find the name if the list is organized alphabetically. 
-**Engagement with reviewer's point:** I understand that some users might also prefer seeing the films that they recently added to their list, as a recently added film is more likely to connect to their current tastes in films. However, in situations where the user wants to remember the name of a film that is at the tip of their tongue, it is easier for them to find the film if it is arranged alphabetically. We can always include a toggle near the watchlist header for the user to change the default setting according to their preferences.
+**My position:** Watchlists should continue to default to alphabetical order.
+
+**Reasoning:** When a user is trying to recall the name of a film they've been meaning to watch, an alphabetical list is easier to scan than a chronological one — they can jump straight to the letter instead of remembering roughly when they added it.
+
+**Engagement with reviewer's point:** I agree that recently added films are often the ones most connected to a user's current taste, and date-added order would surface that more naturally. But I think the two orderings solve different problems — alphabetical helps you find a specific film, date-added helps you see what's fresh — and I don't think one strictly dominates the other for this feature. Rather than picking one as the sole default, I'd propose adding a sort toggle near the watchlist header so users can switch between "A–Z" and "Recently added" based on what they're trying to do in the moment. Until that's built, I'm keeping alphabetical as the default since it's the existing behavior and the safer choice for findability.
 
 ## Comment 6 — Rebase
 **What conflicted:** Merge conflict in .gitignore. The commit message "fix: add deduplication check to prevent duplicate watchlist entries" was committing an accidental change in .gitignore that I did not intend to make.
@@ -34,3 +38,46 @@
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
+![git log --oneline screenshot](assets/oneline.png)
+
+
+### What this feature does
+Adds a watchlist feature so users can save films they intend to watch later,
+separate from their collection of films they've already watched. This includes:
+
+- A `WatchlistEntry` model, tracking which films a user has added to their watchlist
+- `add_to_watchlist(user_id, film_id)` — adds a film to a user's watchlist, with
+  validation for nonexistent films and protection against duplicate entries
+- REST endpoints for adding and viewing a user's watchlist
+- Test coverage for the nonexistent-film case, following the existing pattern
+  used in `test_collection.py`
+
+### Design decisions
+
+**Default visibility:** Watchlists default to `public=True`. A public default
+supports discovery and community engagement — it lets users with similar
+film taste find each other, and lets friends or followers see what someone's
+planning to watch without asking. The tradeoff is that users who assumed
+their watchlist was private have that assumption broken by default; a good
+follow-up would be exposing an explicit `public` parameter so users can opt
+into privacy if they want it.
+
+**Sort order:** Watchlists default to alphabetical order rather than date
+added. Alphabetical ordering makes it easier to find a specific film when a
+user is trying to recall something they've been meaning to watch. I agree
+date-added order better reflects current taste, but I think the two orderings
+solve different problems (findability vs. recency), so rather than picking
+one as strictly better, a good follow-up would be a sort toggle in the UI
+letting users choose between "A–Z" and "Recently added."
+
+### How to manually test
+
+1. Start the app: python app.py
+2. Add a film to a user's watchlist
+3. View the watchlist and confirm the entry appears, sorted alphabetically by title: curl http://127.0.0.1:5000/watchlist/<user_id>
+4. Try adding the same film again — confirm it raises `AlreadyInWatchlistError`
+   instead of creating a duplicate entry.
+
+5. Try adding a nonexistent `film_id` — confirm it raises `FilmNotFoundError`.
+
+6. Run the test suite to confirm everything passes: pytest tests/ -v
