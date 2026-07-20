@@ -28,8 +28,8 @@
 **Engagement with reviewer's point:** I understand that some users might also prefer seeing the films that they recently added to their list, as a recently added film is more likely to connect to their current tastes in films. However, in situations where the user wants to remember the name of a film that is at the tip of their tongue, it is easier for them to find the film if it is arranged alphabetically. We can always include a toggle near the watchlist header for the user to change the default setting according to their preferences.
 
 ## Comment 6 — Rebase
-**What conflicted:**
-**How I resolved it:**
+**What conflicted:** Merge conflict in .gitignore. The commit message "fix: add deduplication check to prevent duplicate watchlist entries" was committing an accidental change in .gitignore that I did not intend to make.
+**How I resolved it:** I manually reviewed the previous and new versions of the .gitignore. Upon selecting that I wanted the current change rather than the incoming change, I git added the .gitignore file and the recommitted with the same message previously mentioned.
 **How I verified no conflict remains:**
 
 ## PR Description
