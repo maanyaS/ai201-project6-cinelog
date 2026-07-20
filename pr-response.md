@@ -34,50 +34,28 @@
 ## Comment 6 — Rebase
 **What conflicted:** Merge conflict in .gitignore. The commit message "fix: add deduplication check to prevent duplicate watchlist entries" was committing an accidental change in .gitignore that I did not intend to make.
 **How I resolved it:** I manually reviewed the previous and new versions of the .gitignore. Upon selecting that I wanted the current change rather than the incoming change, I git added the .gitignore file and the recommitted with the same message previously mentioned.
-**How I verified no conflict remains:**
+**How I verified no conflict remains:** I entered git rebase origin/main to see if the branch was up to date and it was. I also entered git status which showed me that there are no more conflicting files.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
 ![git log --oneline screenshot](assets/oneline.png)
 
+@
+## Overview
+Adds a watchlist feature to CineLog, letting users save films they intend to watch, and addresses the six review comments on the original submission (full write-up in `pr-response.md`).
 
-### What this feature does
-Adds a watchlist feature so users can save films they intend to watch later,
-separate from their collection of films they've already watched. This includes:
+## Changes
+- **`services/watchlist_service.py`** — new service with `add_to_watchlist()`, including a deduplication check that raises `AlreadyInWatchlistError` when a film is already on the user's watchlist.
+- **`routes/watchlist/watchlist.py`** — watchlist endpoint, registered in `app.py`.
+- **`services/collection_service.py`** — switched film retrieval to `db.session.get` for consistency.
+- **`tests/test_watchlist.py`** — tests for the nonexistent-`film_id` path, following the fixture and assertion structure of `test_collection.py`.
 
-- A `WatchlistEntry` model, tracking which films a user has added to their watchlist
-- `add_to_watchlist(user_id, film_id)` — adds a film to a user's watchlist, with
-  validation for nonexistent films and protection against duplicate entries
-- REST endpoints for adding and viewing a user's watchlist
-- Test coverage for the nonexistent-film case, following the existing pattern
-  used in `test_collection.py`
+## Design decisions
+- Watchlists default to `public=True` to support discovery and social connection, with the caveat that an explicit `public` parameter should be exposed so users can opt out.
+- Default sort stays alphabetical for findability; a sort toggle ("A–Z" / "Recently added") is proposed rather than swapping the default.
 
-### Design decisions
+Reasoning for both is expanded in `pr-response.md`.
 
-**Default visibility:** Watchlists default to `public=True`. A public default
-supports discovery and community engagement — it lets users with similar
-film taste find each other, and lets friends or followers see what someone's
-planning to watch without asking. The tradeoff is that users who assumed
-their watchlist was private have that assumption broken by default; a good
-follow-up would be exposing an explicit `public` parameter so users can opt
-into privacy if they want it.
-
-**Sort order:** Watchlists default to alphabetical order rather than date
-added. Alphabetical ordering makes it easier to find a specific film when a
-user is trying to recall something they've been meaning to watch. I agree
-date-added order better reflects current taste, but I think the two orderings
-solve different problems (findability vs. recency), so rather than picking
-one as strictly better, a good follow-up would be a sort toggle in the UI
-letting users choose between "A–Z" and "Recently added."
-
-### How to manually test
-
-1. Start the app: python app.py
-2. Add a film to a user's watchlist
-3. View the watchlist and confirm the entry appears, sorted alphabetically by title: curl http://127.0.0.1:5000/watchlist/<user_id>
-4. Try adding the same film again — confirm it raises `AlreadyInWatchlistError`
-   instead of creating a duplicate entry.
-
-5. Try adding a nonexistent `film_id` — confirm it raises `FilmNotFoundError`.
-
-6. Run the test suite to confirm everything passes: pytest tests/ -v
+## Testing
+All tests in `tests/test_watchlist.py` pass locally.
+@
